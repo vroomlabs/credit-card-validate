@@ -1,18 +1,24 @@
-export function isValidAmericanExpress(ccNumber) {
+function isValidAmericanExpress(ccNumber) {
   if (typeof ccNumber !== 'string') {
     return false
   }
   const firstNum = parseInt(ccNumber[0])
   const secondNum = parseInt(ccNumber[1])
-  return (ccNumber.length === 15) && (firstNum === 3) && (secondNum === 4 || secondNum === 7)
+  return (ccNumber.length === 15) && (firstNum === 3) && (secondNum === 4 || secondNum === 7) && isLuhnValid(ccNumber)
 }
 
-export function isValidMasterCard(ccNumber) {
+function isValidMasterCard(ccNumber) {
+   if (typeof ccNumber !== 'string') {
+     return false
+   }
   const firstSixDigits = getFirstSixDigits(ccNumber)
-  return (ccNumber.length === 16) && (firstSixDigits.inRange(510000, 559999) || firstSixDigits.inRange(222100, 272099))
+  return (ccNumber.length === 16) && (firstSixDigits.inRange(510000, 559999) || firstSixDigits.inRange(222100, 272099)) && isLuhnValid(ccNumber)
 }
 
-export function isValidDiscover(ccNumber) {
+function isValidDiscover(ccNumber) {
+  if (typeof ccNumber !== 'string') {
+    return false
+  }
   const firstSixDigits = getFirstSixDigits(ccNumber)
   return (
     ccNumber.length === 16 &&
@@ -21,15 +27,19 @@ export function isValidDiscover(ccNumber) {
     firstSixDigits === 601174 ||
     firstSixDigits.inRange(601177, 601179) ||
     firstSixDigits.inRange(601186, 601199) ||
-    firstSixDigits.inRange(644000, 659999))
+    firstSixDigits.inRange(644000, 659999)) &&
+    isLuhnValid(ccNumber)
   )
 }
 
-export function isValidVisa(ccNumber) {
-  return ccNumber.length.inRange(13, 19) && parseInt(ccNumber[0]) === 4
+function isValidVisa(ccNumber) {
+   if (typeof ccNumber !== 'string') {
+     return false
+   }
+  return ccNumber.length.inRange(13, 19) && parseInt(ccNumber[0]) === 4 && isLuhnValid(ccNumber)
 }
 
-export function isValidCreditCard(ccNumber) {
+function isValidCreditCard(ccNumber) {
   return (
     isLuhnValid(ccNumber) &&
     (isValidAmericanExpress(ccNumber) ||
@@ -40,7 +50,7 @@ export function isValidCreditCard(ccNumber) {
 }
 
 // tests for valid credit cards https://en.wikipedia.org/wiki/Luhn_algorithm
-export function isLuhnValid(ccNumber) {
+function isLuhnValid(ccNumber) {
   if (typeof ccNumber !== 'string') {
     return false
   }
@@ -58,15 +68,53 @@ export function isLuhnValid(ccNumber) {
   return luhnNumber % 10 === 0
 }
 
-export function isValidCCExpiration(month, year) {
+function isValidCCExpiration(month, year) {
   year = parseInt("20" + year)
   month = parseInt(month)
   return isValidMonth(month) && isFutureDate(month, year)
 }
 
-export function isValidSecurityCode(securityCode, creditCard) {
+function isValidSecurityCode(securityCode, creditCard) {
   if (securityCode != null && isValidAmericanExpress(creditCard)) {
     return securityCode.length === 4
   }
   return securityCode.length === 3
+}
+
+// helper methods
+
+function getFirstSixDigits(ccNumber) {
+  return parseInt(ccNumber.slice(0, 6))
+}
+
+function sumDigits(num) {
+  return sumArrayofNums(num.toString().split("").map(Number))
+}
+
+// monkey-patch Number class to add inclusive range function
+Number.prototype.inRange = function(low, high) {
+  return this >= low && this <= high
+}
+
+function isValidMonth(month) {
+  return month >= 1 && month <= 12
+}
+
+function isFutureDate(month, year) {
+  const today = new Date()
+  const currentYear = today.getFullYear()
+  const currentMonth = today.getMonth()
+  return (year > currentYear) || (year === currentYear && month >= currentMonth)
+}
+
+module.exports = {
+  isValidAmericanExpress,
+  isValidMasterCard,
+  isValidDiscover,
+  isValidVisa,
+  isValidDiscover,
+  isLuhnValid,
+  isValidCreditCard,
+  isValidCCExpiration,
+  isValidSecurityCode
 }
