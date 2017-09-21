@@ -2,15 +2,15 @@
 
 ## Installation and Use
 
-To install:
+#### To install:
 
 `npm install pay-me`
 
-Include in file:
+#### Include in file:
 
 `const payMe = require('pay-me')`
 
-Available methods:
+#### Available methods:
 
 `isValidAmericanExpress(ccNumber)`
 
@@ -24,10 +24,10 @@ Available methods:
 
 `isLuhnValid(ccNumber) // validates checksum`
 
-`isValidCreditCard(ccNumber) // is amex/mastercard/visa/discover
+`isValidCreditCard(ccNumber) // is amex/mastercard/visa/discover`
 
 `isValidCCExpiration(month, year) // month and year are both two character strings`
 
-`isValidSecurityCode(cvc, ccNumber)` // checks length
+`isValidSecurityCode(cvc, ccNumber) // checks length`
 
 All return a boolean.
