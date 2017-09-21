@@ -1,6 +1,6 @@
 {
   "name": "pay-me",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A collection of methods of validating credit cards.",
   "main": "index.js",
   "directories": {
